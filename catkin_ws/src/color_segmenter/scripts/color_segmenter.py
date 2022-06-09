@@ -12,7 +12,7 @@ def mouse_callback(event,x,y,flags,param):
             print(hsv[y,x])
 def callback_image(msg):
     global hsv
-    global pub_ball
+    global pub_ball, use_gui
     bridge = CvBridge()
     img = bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
 
@@ -24,15 +24,20 @@ def callback_image(msg):
     msg_ball.data = [cx,cy]
     if [cx,cy]!= [0,0]:
         pub_ball.publish(msg_ball)
-    cv2.circle(img,(int(cx),int(cy)),100,(255,0,0),10)
-    cv2.imshow("Binary", bin)
-    cv2.imshow("Image",img)
-    cv2.imshow("HSV",hsv)
-    cv2.waitKey(10)
+    if use_gui:
+        cv2.circle(img,(int(cx),int(cy)),100,(255,0,0),10)
+        cv2.imshow("Binary", bin)
+        cv2.imshow("Image",img)
+        cv2.imshow("HSV",hsv)
+        cv2.waitKey(10)
+        
 def main ():
-    global pub_ball
+    global pub_ball, use_gui
+    use_gui= True
     print("initializing color segmenter")
     rospy.init_node("color_segmenter")
+    if rospy.has_param("~gui"):
+        use_gui = rospy.get_param("~gui")
     rospy.Subscriber("/camera/color/image_raw", Image, callback_image)
     pub_ball = rospy.Publisher("/ball_position",Float32MultiArray,queue_size=10)
     cv2.namedWindow('HSV')
