@@ -17,7 +17,7 @@ def callback_image(msg):
     img = bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
 
     hsv = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
-    bin = cv2.inRange(hsv,(70,180,150),(77,255,255))
+    bin = cv2.inRange(hsv,(65,162,101),(83,207,255))
     idx =  cv2.findNonZero(bin)
     [cx,cy,var1,var2] = cv2.mean(idx)
     msg_ball = Float32MultiArray()
